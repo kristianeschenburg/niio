@@ -6,8 +6,6 @@ Created on Wed Oct 11 15:23:17 2017
 @author: kristianeschenburg
 """
 
-import csv
-
 import nibabel as nb
 import numpy as np
 
@@ -59,6 +57,7 @@ def writeGiftiImage(dataVector,outputName,hemisphere=None,label=None):
 
     nb.save(gi,outputName)
     
+    
 def giftiColorMap(colormap):
     
     with open(colormap,'r') as cmap:
@@ -69,10 +68,9 @@ def giftiColorMap(colormap):
     for l in np.arange(0,len(c),2):
         lm = labelMap(c[l],c[l+1])
         labelTable.labels.append(lm)
-    
-    LD = labelTable.get_labels_as_dict()
-    
+
     return labelTable
+
 
 def labelMap(name,vrgba):
     
@@ -92,16 +90,3 @@ def labelMap(name,vrgba):
     label.label = name
     
     return label
-
-def loadCSV(inFile):
-    
-    d = []
-    with open(inFile,'rb') as inFile:
-        readCSV = csv.reader(inFile,delimiter=',')
-        for row in readCSV:
-            R = map(float,row)
-            d.append(np.asarray(R).squeeze())
-        
-    d = np.asarray(d).squeeze()
-    
-    return d

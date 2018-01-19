@@ -8,9 +8,8 @@ Created on Thu Mar  2 10:43:58 2017
 import numpy as np
 import nibabel
 
-import h5py
 import os
-import pickle
+import csv,h5py,pickle
 import scipy.io as sio
 
 
@@ -136,6 +135,19 @@ def loadPick(inFile,*args):
     else:
         return data
 
+
+def loadCSV(inFile):
+    
+    d = []
+    with open(inFile,'rb') as inFile:
+        readCSV = csv.reader(inFile,delimiter=',')
+        for row in readCSV:
+            R = map(float,row)
+            d.append(np.asarray(R).squeeze())
+        
+    d = np.asarray(d).squeeze()
+    
+    return d
 
 """
 def parseH5(h5Object,featureNames):
