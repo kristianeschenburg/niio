@@ -13,16 +13,21 @@ import csv,h5py,pickle
 import scipy.io as sio
 
 
-def loadMat(inFile,*dataset):
+def loadMat(matFile,*dataset):
     
     """
     Method to load .mat files.  Not part of a specific class.
+    
+    Parameters:
+    - - - - -
+        matFile : input .mat file
+        datasets : if you want a specific key array, supply name of key
     """
     
-    assert os.path.exists(inFile)
+    assert os.path.exists(matFile)
 
     try:
-        matData = sio.loadmat(inFile)
+        matData = sio.loadmat(matFile)
     except:
         raise NotImplementedError('Cannot load matrix file with scipy.io.')
     else:
@@ -41,38 +46,41 @@ def loadMat(inFile,*dataset):
         
     return mat
 
-def loadGii(inFile,darray=0,*args):
+def loadGii(giiFile,darrayID=0,*args):
     
     """
     Method to load Gifti files.  Not part of a specific class.
+    
+    Parameters:
+    - - - - -
+        giiFile : input gifti (or .nii) file
+        darrayID : if array is .gii, often comes with multiple arrays -- you can
+                    choose to specify which one
     """
     
-    parts = str.split(inFile,'/')
-    if isinstance(darray,int):
-        darray = [darray]
+    assert os.path.exists(giiFile)
+    
+    if isinstance(darrayID,int):
+        darrayID = [darrayID]
     else:
-        darray = list(darray)
+        darrayID = list(darrayID)
     
     try:
-        data = nibabel.load(inFile)
-    except OSError:
-        print('Warning: {} cannot be read.'.format(parts[-1]))
+        gii = nibabel.load(giiFile)
+    except:
+        raise IOError('{} cannot be read.'.format(giiFile))
+
+    if isinstance(gii,nibabel.gifti.GiftiImage):
+        darray = []
+        for j in darrayID:
+            darray.append(np.asarray(gii.darrays[j].data).squeeze())
+        darray = np.column_stack(darray).squeeze()
+    elif isinstance(gii,nibabel.nifti2.Nifti2Image):
+        darray = np.asarray(gii.get_data()).squeeze()
     else:
-        # if data is instance of GiftiImage
-        if isinstance(data,nibabel.gifti.gifti.GiftiImage):
-            label = []
-            for j in darray:
-                label.append(np.squeeze(data.darrays[j].data))
-            label = np.column_stack(label).squeeze()
-            
-        # if data is instance of Nifti2Image
-        elif isinstance(data,nibabel.nifti2.Nifti2Image):
-            label = np.squeeze(np.asarray(data.get_data()))
-        elif isinstance(data,nibabel.cifti2.cifti2.Cifti2Image):
-            label = np.squeeze(np.asarray(data.get_data()));
-        
-        return label
-        
+        raise IOError('Cannot access array data.')
+    
+    return darray
     
 def loadH5(inFile,datasets=None,group=None):
     
@@ -119,35 +127,49 @@ def loadH5(inFile,datasets=None,group=None):
     return data
     
 
-def loadPick(inFile,*args):
+def loadPick(pickleFile,*args):
     
     """
     Method to load pickle file.  Not part of a specific class.
+    
+    Parameters:
+    - - - - -
+        pickleFile : input pickle file
     """
-
-    parts = str.split(inFile,'/')
+    
+    assert os.path.exists(pickleFile)
 
     try:
-        with open(inFile,"rb") as toRead:
-            data = pickle.load(toRead)
-    except OSError:
-        print('Warning: {} cannot be read.'.format(parts[-1]))
-    else:
-        return data
-
-
-def loadCSV(inFile):
+        with open(pickleFile,"rb") as inPickle:
+            pick = pickle.load(inPickle)
+    except:
+        raise IOError('File cannot be loaded.')
     
-    d = []
-    with open(inFile,'rb') as inFile:
-        readCSV = csv.reader(inFile,delimiter=',')
+    return pick
+
+
+def loadCSV(csvFile):
+    
+    """
+    Method to read csv file.
+    
+    Parameters:
+    - - - - -
+        inCSV : input csv file
+    """
+    
+    assert os.path.exists(csvFile)
+    
+    csv_data = []
+    with open(csvFile,'rb') as inCSV:
+        readCSV = csv.reader(inCSV,delimiter=',')
         for row in readCSV:
             R = map(float,row)
-            d.append(np.asarray(R).squeeze())
+            csv_data.append(np.asarray(R).squeeze())
         
-    d = np.asarray(d).squeeze()
+    csv_data = np.asarray(csv_data).squeeze()
     
-    return d
+    return csv_data
 
 """
 def parseH5(h5Object,featureNames):

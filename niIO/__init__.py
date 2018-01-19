@@ -1,1 +1,2 @@
-from .niIO import *
+from .loaded import *
+from .writeGifti import *
