@@ -9,7 +9,7 @@ Created on Wed Oct 11 15:23:17 2017
 import nibabel as nb
 import numpy as np
 
-def writeGiftiImage(dataVector,outputName,hemisphere=None,label=None):
+def writeGiftiImage(dataVector,outputName,hemisphere=None):
     
     """
     
@@ -21,7 +21,7 @@ def writeGiftiImage(dataVector,outputName,hemisphere=None,label=None):
     
     Parameters:
     - - - - -
-        dataVector : vector to save as Gifti file
+        dataVector : list of vectors to save as Gifti file
         outputName : output file name
         hemisphere : 'CortexLeft' or 'CortexRight', depending on hemisphere
         
@@ -42,18 +42,16 @@ def writeGiftiImage(dataVector,outputName,hemisphere=None,label=None):
     metaData = nb.gifti.GiftiMetaData(nvPair)
     
     # Generate GiftiImage object containing data vector and meta data
-
-    if label:
-        labelTable = giftiColorMap(label)
-        dataVector = np.squeeze(dataVector.astype(np.int32))
-        gi = nb.gifti.GiftiImage(meta=metaData,labeltable=labelTable)
+    gi = nb.gifti.GiftiImage(meta = metaData)
     
-    else:
-        dataVector = np.squeeze(dataVector.astype(np.float32))
-        gi = nb.gifti.GiftiImage(meta=metaData)
+    for d in np.arange(dataVector.shape[1]):
         
-    gad = nb.gifti.GiftiDataArray(data=dataVector)
-    gi.add_gifti_data_array(gad)
+        print d
+        print d
+        
+        newVector = np.asarray(dataVector[:,d]).squeeze().astype(np.float32)
+        gda = nb.gifti.GiftiDataArray(data=newVector)
+        gi.add_gifti_data_array(gda)
 
     nb.save(gi,outputName)
     

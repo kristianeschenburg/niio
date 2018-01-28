@@ -103,6 +103,7 @@ def loadH5(inFile,datasets=None,group=None):
     except:
         raise IOError('File cannot be loaded.')
 
+    # If user specifies an object group containing data
     data = {}    
     if group:
         try:
@@ -113,6 +114,7 @@ def loadH5(inFile,datasets=None,group=None):
     else:
         h5Lower = h5
         
+    # If User specifies specific object datasets
     if not datasets:
         datasets = h5Lower.keys()
         
@@ -170,28 +172,3 @@ def loadCSV(csvFile):
     csv_data = np.asarray(csv_data).squeeze()
     
     return csv_data
-
-"""
-def parseH5(h5Object,featureNames):
-    
-
-    # We are loading the H5 objects as read only.  parseH5 copy the contents of
-    # the h5 object to a dictionary.
-
-    groups = h5Object.keys()
-    parsedData = {str(s): {}.fromkeys(featureNames) for s in groups}
-    'Parsing {} for all subjects.'.format(featureNames)
- 
-    for s in groups:
-
-        cond = True
-        for f in featureNames:
-            if f in h5Object[s].keys():
-                parsedData[str(s)][f] = np.asarray(h5Object[str(s)][f])
-            else:
-                cond = False
-        if not cond:
-            del parsedData[s]
-    
-    return parsedData
-"""
