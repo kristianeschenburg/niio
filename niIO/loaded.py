@@ -16,7 +16,7 @@ import scipy.io as sio
 def loadMat(matFile,*dataset):
     
     """
-    Method to load .mat files.  Not part of a specific class.
+    Method to load .mat files.
     
     Parameters:
     - - - - -
@@ -46,10 +46,10 @@ def loadMat(matFile,*dataset):
         
     return mat
 
-def loadGii(giiFile,darrayID=0,*args):
+def loadGii(giiFile,darrayID=0):
     
     """
-    Method to load Gifti files.  Not part of a specific class.
+    Method to load Gifti files.
     
     Parameters:
     - - - - -
@@ -85,15 +85,15 @@ def loadGii(giiFile,darrayID=0,*args):
 def loadH5(inFile,datasets=None,group=None):
     
     """
-    Method to load hdf5 files.  Not part of specific class.
+    Method to load hdf5 files.
     
     Parameters:
     - - - - -
         inFile : input file name
-        group : group in which datasets are contained.  If not group, datasets
-                assumed to exist at top level of file structure.
         datasets : attributes in file to be extracted.  If not specified, returns
                 dictionary of all key-value pairs in file.
+        group : group in which datasets are contained.  If not group, datasets
+                assumed to exist at top level of file structure.
     """
     
     assert os.path.exists(inFile)
@@ -129,7 +129,7 @@ def loadH5(inFile,datasets=None,group=None):
     return data
     
 
-def loadPick(pickleFile,*args):
+def loadPick(pickleFile):
     
     """
     Method to load pickle file.  Not part of a specific class.
