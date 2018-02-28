@@ -7,6 +7,7 @@ Created on Thu Mar  2 10:43:58 2017
 
 import numpy as np
 import nibabel as nb
+import scipy.io as sio
 
 import os
 import csv,h5py,pickle
@@ -21,7 +22,7 @@ def load(datafile,**kwargs):
                         '.h5': loadH5,
                         '.p': loadPick,
                         '.csv': loadCSV}
-        
+
         return function_map[file_extension](datafile,**kwargs)
         
 
@@ -38,23 +39,35 @@ def loadMat(infile,datasets=None,group=None):
 
     try:
         matData = h5py.File(infile,mode='r')
-    except NotImplementedError:
-        raise Warning('Cannot read file.')
-    else:
-        mat = {}
-        if datasets:
-            try:
-                mat = np.asarray(matData[datasets]).squeeze().T
-            except KeyError:
-                raise Warning('File not have key {}'.format(datasets))
-                    
+    except:
+        try:
+            matData = sio.loadmat(infile)
+        except:
+            err = 'Cannot read with h5py or scipy.io.'
+            raise IOError(err)
+
+    if datasets:
+        try:
+            mat = np.asarray(matData[datasets]).squeeze()
+        except:
+            pass
         else:
-            for k in matData.keys():
-                if k.startswith('_'):
-                    del matData[k]  
-            key = matData.keys()[0]
-            mat[key] = np.asarray(matData[matData.keys()[0]]).squeeze()
+            if type(matData) == h5py._hl.files.File:
+                mat = mat.T
+
+    else:
+        for k in matData.keys():
+            if k.startswith('_'):
+                del matData[k]  
+        key = matData.keys()[0]
+        mat = np.asarray(matData[key]).squeeze()
         
+        if type(matData) == h5py._hl.files.File:
+                mat = mat.T
+
+    if type(matData) == h5py._hl.files.File:
+        matData.close()
+
     return mat
 
 

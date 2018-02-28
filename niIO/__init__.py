@@ -1,2 +1,2 @@
 from .loaded import *
-from .writeGifti import *
+from .write import *
