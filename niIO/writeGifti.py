@@ -43,15 +43,10 @@ def writeGiftiImage(dataVector,outputName,hemisphere=None):
     
     # Generate GiftiImage object containing data vector and meta data
     gi = nb.gifti.GiftiImage(meta = metaData)
-    
-    for d in np.arange(dataVector.shape[1]):
-        
-        print d
-        print d
-        
-        newVector = np.asarray(dataVector[:,d]).squeeze().astype(np.float32)
-        gda = nb.gifti.GiftiDataArray(data=newVector)
-        gi.add_gifti_data_array(gda)
+
+    newVector = np.asarray(dataVector).squeeze().astype(np.float32)
+    gda = nb.gifti.GiftiDataArray(data=newVector)
+    gi.add_gifti_data_array(gda)
 
     nb.save(gi,outputName)
     

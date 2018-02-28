@@ -6,14 +6,26 @@ Created on Thu Mar  2 10:43:58 2017
 """
 
 import numpy as np
-import nibabel
+import nibabel as nb
 
 import os
 import csv,h5py,pickle
-import scipy.io as sio
 
+def load(datafile,**kwargs):
 
-def loadMat(matFile,*dataset):
+        assert os.path.exists(datafile)
+        filename, file_extension = os.path.splitext(datafile)
+
+        function_map = {'.mat': loadMat,
+                        '.gii': loadGii,
+                        '.h5': loadH5,
+                        '.p': loadPick,
+                        '.csv': loadCSV}
+        
+        return function_map[file_extension](datafile,**kwargs)
+        
+
+def loadMat(infile,datasets=None,group=None):
     
     """
     Method to load .mat files.
@@ -23,30 +35,30 @@ def loadMat(matFile,*dataset):
         matFile : input .mat file
         datasets : if you want a specific key array, supply name of key
     """
-    
-    assert os.path.exists(matFile)
 
     try:
-        matData = sio.loadmat(matFile)
-    except:
-        raise NotImplementedError('Cannot load matrix file with scipy.io.')
+        matData = h5py.File(infile,mode='r')
+    except NotImplementedError:
+        raise Warning('Cannot read file.')
     else:
-        if dataset:
+        mat = {}
+        if datasets:
             try:
-                mat = matData[dataset]
-            except:
-                raise KeyError('File not have key {}'.format(dataset))
-            else:
-                mat = np.asarray(matData[dataset]).squeeze()
+                mat = np.asarray(matData[datasets]).squeeze().T
+            except KeyError:
+                raise Warning('File not have key {}'.format(datasets))
+                    
         else:
             for k in matData.keys():
                 if k.startswith('_'):
-                    del matData[k]     
-            mat = np.asarray(matData[matData.keys()[0]]).squeeze()
+                    del matData[k]  
+            key = matData.keys()[0]
+            mat[key] = np.asarray(matData[matData.keys()[0]]).squeeze()
         
     return mat
 
-def loadGii(giiFile,darrayID=0):
+
+def loadGii(infile,datasets=0,group=None):
     
     """
     Method to load Gifti files.
@@ -57,32 +69,31 @@ def loadGii(giiFile,darrayID=0):
         darrayID : if array is .gii, often comes with multiple arrays -- you can
                     choose to specify which one
     """
-    
-    assert os.path.exists(giiFile)
-    
-    if isinstance(darrayID,int):
-        darrayID = [darrayID]
-    else:
-        darrayID = list(darrayID)
-    
-    try:
-        gii = nibabel.load(giiFile)
-    except:
-        raise IOError('{} cannot be read.'.format(giiFile))
 
-    if isinstance(gii,nibabel.gifti.GiftiImage):
+    if isinstance(datasets,int):
+        datasets = [datasets]
+    else:
+        datasets = list(datasets)
+
+    try:
+        gii = nb.load(infile)
+    except:
+        raise IOError('{} cannot be read.'.format(infile))
+
+    if isinstance(gii,nb.gifti.GiftiImage):
         darray = []
-        for j in darrayID:
+        for j in datasets:
             darray.append(np.asarray(gii.darrays[j].data).squeeze())
         darray = np.column_stack(darray).squeeze()
-    elif isinstance(gii,nibabel.nifti2.Nifti2Image):
+    elif isinstance(gii,nb.nifti2.Nifti2Image):
         darray = np.asarray(gii.get_data()).squeeze()
     else:
         raise IOError('Cannot access array data.')
     
     return darray
     
-def loadH5(inFile,datasets=None,group=None):
+
+def loadH5(infile,datasets=None,group=None):
     
     """
     Method to load hdf5 files.
@@ -96,10 +107,10 @@ def loadH5(inFile,datasets=None,group=None):
                 assumed to exist at top level of file structure.
     """
     
-    assert os.path.exists(inFile)
+    assert os.path.exists(infile)
     
     try:
-        h5 = h5py.File(inFile,'r')
+        h5 = h5py.File(infile,'r')
     except:
         raise IOError('File cannot be loaded.')
 
@@ -129,7 +140,7 @@ def loadH5(inFile,datasets=None,group=None):
     return data
     
 
-def loadPick(pickleFile):
+def loadPick(infile,datasets=None,group=None):
     
     """
     Method to load pickle file.  Not part of a specific class.
@@ -139,10 +150,10 @@ def loadPick(pickleFile):
         pickleFile : input pickle file
     """
     
-    assert os.path.exists(pickleFile)
+    assert os.path.exists(infile)
 
     try:
-        with open(pickleFile,"rb") as inPickle:
+        with open(infile,"rb") as inPickle:
             pick = pickle.load(inPickle)
     except:
         raise IOError('File cannot be loaded.')
@@ -150,7 +161,7 @@ def loadPick(pickleFile):
     return pick
 
 
-def loadCSV(csvFile):
+def loadCSV(infile,datasets=None,group=None):
     
     """
     Method to read csv file.
@@ -160,10 +171,10 @@ def loadCSV(csvFile):
         inCSV : input csv file
     """
     
-    assert os.path.exists(csvFile)
+    assert os.path.exists(infile)
     
     csv_data = []
-    with open(csvFile,'rb') as inCSV:
+    with open(infile,'rb') as inCSV:
         readCSV = csv.reader(inCSV,delimiter=',')
         for row in readCSV:
             R = map(float,row)
