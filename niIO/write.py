@@ -28,7 +28,7 @@ def writeGiftiImage(dataVector,outputName,hemisphere=None):
         
     To visualize, install Connectome Workbench and enter following command:
         
-        wb_view BASENAME.func.gii SURFACEFILE.surf.gii
+        wb_view outputName ${surfaceFile}.surf.gii
     
     The hemisphere of the surface must match hemisphere parameter.
     
@@ -43,10 +43,18 @@ def writeGiftiImage(dataVector,outputName,hemisphere=None):
     
     # Generate GiftiImage object containing data vector and meta data
     gi = nb.gifti.GiftiImage(meta = metaData)
+    
+    if isinstance(dataVector,list):
+        for dv in dataVector:
 
-    newVector = np.asarray(dataVector).squeeze().astype(np.float32)
-    gda = nb.gifti.GiftiDataArray(data=newVector)
-    gi.add_gifti_data_array(gda)
+            newVector = np.asarray(dv).squeeze().astype(np.float32)
+            gda = nb.gifti.GiftiDataArray(data=newVector)
+            gi.add_gifti_data_array(gda)
+    
+    else:
+        newVector = np.asarray(dataVector).squeeze().astype(np.float32)
+        gda = nb.gifti.GiftiDataArray(data=newVector)
+        gi.add_gifti_data_array(gda)
 
     nb.save(gi,outputName)
     
