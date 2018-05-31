@@ -9,7 +9,7 @@ Created on Wed Oct 11 15:23:17 2017
 import nibabel as nb
 import numpy as np
 
-def writeGiftiImage(dataVector,outputName,hemisphere=None):
+def save(dataVector,outputName,hemisphere=None):
     
     """
     
@@ -83,11 +83,13 @@ def labelMap(name,vrgba):
     colors = vrgba.strip().split(' ')
     colors = map(int,colors)
     
-    label = nb.gifti.GiftiLabel(key=colors[0],
-                                red=colors[1],
-                                green=colors[2],
-                                blue=colors[3],
-                                alpha=colors[4])
+    [key,red,green,blue,alpha] = colors
+    
+    label = nb.gifti.GiftiLabel(key=key,
+                                red=red,
+                                green=green,
+                                blue=blue,
+                                alpha=alpha)
     label.label = name
     
     return label
