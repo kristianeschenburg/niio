@@ -71,7 +71,7 @@ def loadMat(infile,datasets=None,group=None):
     return mat
 
 
-def loadGii(infile,datasets=0,group=None):
+def loadGii(infile,datasets=[],group=None):
     
     """
     Method to load Gifti files.
@@ -83,15 +83,17 @@ def loadGii(infile,datasets=0,group=None):
                     choose to specify which one
     """
 
-    if isinstance(datasets,int):
-        datasets = [datasets]
-    else:
-        datasets = list(datasets)
-
     try:
         gii = nb.load(infile)
     except:
         raise IOError('{} cannot be read.'.format(infile))
+    
+    if isinstance(datasets,int):
+        datasets = [datasets]
+    elif isinstance(datasets,np.ndarray):
+        datasets = list(datasets)
+    elif datasets==[]:
+        datasets = list(np.arange(len(gii.darrays)))
 
     if isinstance(gii,nb.gifti.GiftiImage):
         darray = []
