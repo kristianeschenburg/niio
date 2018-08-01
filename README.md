@@ -1,2 +1,2 @@
-# niIO
-input / output scripts for reading and writing various neuroimaging files for easy access to data arrays
+# niio
+input / output methods for reading and writing common neuroimaging file formats for fast access to data arrays.
