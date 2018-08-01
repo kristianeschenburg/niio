@@ -31,6 +31,10 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+
+import niio
+import sphinx_rtd_theme
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
@@ -75,7 +79,7 @@ author = 'Kristian Eschenburg'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-import niio
+
 # The short X.Y version.
 version = niio.__version__
 # The full version, including alpha/beta/rc tags.
@@ -106,7 +110,6 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
-import sphinx_rtd_theme
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -188,9 +191,6 @@ texinfo_documents = [
      author, 'niio', 'Package for quickly loading common neuroimaging data.',
      'Miscellaneous'),
 ]
-
-
-
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
