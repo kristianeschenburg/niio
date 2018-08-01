@@ -26,7 +26,7 @@ def load(datafile,**kwargs):
         return function_map[file_extension](datafile,**kwargs)
         
 
-def loadMat(infile,datasets=None,group=None):
+def loadMat(infile,datasets=None):
     
     """
     Method to load .mat files.
@@ -34,18 +34,20 @@ def loadMat(infile,datasets=None,group=None):
     Parameters:
     - - - - -
         matFile : input .mat file
-        datasets : if you want a specific key array, supply name of key
+        datasets : if you know the specific key, provide key name.  Otherwise,
+                    returns first non-private key data array.
     """
 
     try:
         matData = h5py.File(infile,mode='r')
-    except:
+    except IOError:
         try:
             matData = sio.loadmat(infile)
         except:
             err = 'Cannot read with h5py or scipy.io.'
             raise IOError(err)
 
+    # if key name is known
     if datasets:
         try:
             mat = np.asarray(matData[datasets]).squeeze()
@@ -55,16 +57,22 @@ def loadMat(infile,datasets=None,group=None):
             if type(matData) == h5py._hl.files.File:
                 mat = mat.T
 
+    # otherwise, parse through keys, and select first non-private key name
+    # and data array
     else:
-        for k in matData.keys():
-            if k.startswith('_'):
-                del matData[k]  
-        key = matData.keys()[0]
+        
+        # remove private keys
+        keys = [k for k in matData.keys() if k.startswith('_')]
+        matData = {k: matData[k] for k in matData.keys() if k not in keys}
+        
+        # get first non-private key
+        key = list(matData.keys())[0]
         mat = np.asarray(matData[key]).squeeze()
         
         if type(matData) == h5py._hl.files.File:
                 mat = mat.T
 
+    # if h5py, close object
     if type(matData) == h5py._hl.files.File:
         matData.close()
 
