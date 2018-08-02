@@ -9,7 +9,6 @@ import numpy as np
 import nibabel as nb
 import scipy.io as sio
 
-import csv
 import os
 import h5py
 import pickle
@@ -186,26 +185,3 @@ def loadPick(infile, datasets=None, group=None):
         raise Warning('File cannot be loaded.')
 
     return pick
-
-
-def loadCSV(infile, datasets=None, group=None):
-    """
-    Method to read csv file.
-
-    Parameters:
-    - - - - -
-        infile : input csv file
-    """
-
-    assert os.path.exists(infile)
-
-    csv_data = []
-    with open(infile, 'rb') as inCSV:
-        readCSV = csv.reader(inCSV, delimiter=',')
-        for row in readCSV:
-            R = map(float, row)
-            csv_data.append(np.asarray(R).squeeze())
-
-    csv_data = np.asarray(csv_data).squeeze()
-
-    return csv_data
