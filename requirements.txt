@@ -1,7 +1,5 @@
 # List required packages in this file, one per line.
-csv
 h5py
 nibabel
 numpy
-pickle
 scipy

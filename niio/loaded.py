@@ -27,8 +27,7 @@ def load(datafile, **kwargs):
     function_map = {'.mat': loadMat,
                     '.gii': loadGii,
                     '.h5': loadH5,
-                    '.p': loadPick,
-                    '.csv': loadCSV}
+                    '.p': loadPick}
 
     return function_map[file_extension](datafile, **kwargs)
 
