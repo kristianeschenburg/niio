@@ -6,6 +6,9 @@ def mat2func(in_mat, out_func, hemisphere):
 
     """
     Method to quickly convert between Matlab .mat and Gifti .func.gii files.
+    Generally, the Matlab file will be a 1-dimensional array.  If it is not,
+    each column (dimension) will be saved as a DataArray object in the
+    Gifti file.
 
     Parameters:
     - - - - -
@@ -17,6 +20,10 @@ def mat2func(in_mat, out_func, hemisphere):
 
     mat = loaded.load(in_mat)
     mat = mat.squeeze()
+
+    if mat.ndim > 1:
+        mat = mat.T.tolist()
+
     write.save(mat, out_func, hemisphere)
 
 
