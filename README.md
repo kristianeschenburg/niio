@@ -1,7 +1,6 @@
 # What is niio?
 
-**niio** is a Python package for quickly loading in common neuroimaging data.  It's a class of methods that act as wrappers for common input formats like those offered by the **scipy**, **nibabel**, **h5py** **pickle** libraries.  
-Current functionality includes **loading**, **saving**, and **converting between** various formats.
+**niio** is a Python package for quickly loading common neuroimaging data.  It's a class of methods that act as wrappers for common input formats like those offered by **Nifti**, **Matlab**, **Nibabel**, **h5py**, and **pickle** libraries.  Current functionality includes **loading**, **saving**, and **converting between** various formats.
 
 While the above libraries work fine, I wanted a way to access the data without needing to remember / write out specifically what attributes and methods would specifically return the data.  As an example, with **nibabel**, for **Gifti** formattd data:
 
