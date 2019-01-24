@@ -51,3 +51,55 @@ def save(func, output, hemisphere=None):
         gifti_image.add_gifti_data_array(gda)
 
     nb.save(gifti_image, output)
+
+def save_surf(vertices, triangles, output, hemisphere=None):
+
+    """
+    Save a list of vertices and triangles to a surface file.
+
+    Parameters:
+    - - - - -
+    vertices: array, float
+        3d coordinates of mesh points
+    triangles: array, int
+        list of mesh triangles
+    output: string
+        output file name
+    hemisphere: string
+        'CortexLeft' or 'CortexRight'
+    """
+
+    # Initialize meta-data dictionary structure
+    meta_dict = {'AnatomicalStructurePrimary': hemisphere,
+                 'AnatomicalStructureSecondary': 'GrayWhite',
+                 'Caret-Version': '5.65',
+                 'GeometricType': 'Anatomical'}
+
+    # Write meta data to GiftiMetaData object
+    meta = nb.gifti.gifti.GiftiMetaData()
+    for k, v in meta_dict.items():
+        nvp = nb.gifti.gifti.GiftiNVPairs(name=k, value=v)
+        meta.data.append(nvp)
+
+    # Initialize GiftiCoordSystem object
+    coordsys = nb.gifti.gifti.GiftiCoordSystem(dataspace='NIFTI_XFORM_TALAIRACH',
+                                               xformspace='NIFTI_XFORM_TALAIRACH',
+                                               xform=np.eye(4))
+
+    # Initialize data array of vertices
+    d0 = nb.gifti.gifti.GiftiDataArray(intent='NIFTI_INTENT_POINTSET',
+                                       datatype='NIFTI_TYPE_FLOAT32',
+                                       coordsys=coordsys,
+                                       data=vertices,
+                                       encoding='GZipBase64Binary',
+                                       meta=meta)
+
+    # Initialize data array of triangles
+    d1 = nb.gifti.gifti.GiftiDataArray(intent='NIFTI_INTENT_TRIANGLE',
+                                    datatype='NIFTI_TYPE_INT32',
+                                    coordsys=coordsys,
+                                    data=triangles,
+                                    encoding='GZipBase64Binary')
+
+    S = nb.gifti.gifti.GiftiImage(darrays=[d0,d1])
+    S.to_filename(output)
