@@ -1,0 +1,4 @@
+h5py
+nibabel
+numpy
+scipy

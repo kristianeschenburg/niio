@@ -1,0 +1,33 @@
+Metadata-Version: 1.1
+Name: niio
+Version: 0.post36+g338cda7
+Summary: Package for quickly loading common neuroimaging data.
+Home-page: https://github.com/kristianeschenburg/niio
+Author: Kristian Eschenburg
+Author-email: keschenb@uw.edu
+License: BSD (3-clause)
+Description: ===============================
+        niio
+        ===============================
+        
+        .. image:: https://img.shields.io/travis/kristianeschenburg/niio.svg
+                :target: https://travis-ci.org/kristianeschenburg/niio
+        
+        .. image:: https://img.shields.io/pypi/v/niio.svg
+                :target: https://pypi.python.org/pypi/niio
+        
+        
+        Package for quickly loading common neuroimaging data.
+        
+        * Free software: 3-clause BSD license
+        * Documentation: (COMING SOON!) https://kristianeschenburg.github.io/niio.
+        
+        Features
+        --------
+        
+        * TODO
+        
+Platform: UNKNOWN
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3

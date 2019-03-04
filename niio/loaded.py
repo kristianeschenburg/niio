@@ -184,3 +184,32 @@ def loadPick(infile, datasets=None, group=None):
         raise Warning('File cannot be loaded.')
 
     return pick
+
+def loadSurf(inFile, gifti=True):
+
+    """
+    Method to load gifti surface file.
+
+    Parameters:
+    - - - - -
+    inFile: str
+        path to surface file
+    
+    Returns:
+    - - - -
+    vertices: float, array
+        array of mesh vertices
+    faces: int, array
+        array of mesh triangles
+    """
+
+    if gifti:
+        surf = nb.load(inFile)
+        vertices = surf.darrays[0].data
+        faces = surf.darrays[1].data
+    else:
+        surf = nb.freesurfer.read_geometry(inFile)
+        vertices = surf[0]
+        faces = surf[1]
+
+    return [vertices, faces]
