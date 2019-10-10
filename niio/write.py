@@ -28,7 +28,11 @@ def save(func, output, hemisphere=None):
 
     """
 
-    assert hemisphere in ['CortexLeft', 'CortexRight']
+    assert hemisphere in ['L', 'R']
+
+    hemi_map = {'L': 'CortexLeft',
+                'R': 'CortexRight'}
+    hemisphere = hemi_map[hemisphere]
 
     # Create name-value meta data pairs (used for loading in image viewer)
     nvPair = nb.gifti.GiftiNVPairs(name='AnatomicalStructurePrimary',
