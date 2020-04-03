@@ -4,6 +4,7 @@ LICENSE
 MANIFEST.in
 README.rst
 setup.cfg
+setup.py
 versioneer.py
 docs/Makefile
 docs/make.bat
@@ -16,6 +17,8 @@ niio/__init__.py
 niio/_version.py
 niio/convert.py
 niio/loaded.py
+niio/structures.py
+niio/tables.py
 niio/write.py
 niio.egg-info/PKG-INFO
 niio.egg-info/SOURCES.txt
