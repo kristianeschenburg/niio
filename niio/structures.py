@@ -47,8 +47,16 @@ class ParcelImage(object):
         """
 
         assert isinstance(X, pandas.core.frame.DataFrame)
-        self.data = X
-    
+
+        _, p = X.shape
+        data = np.zeros((self.rows, self.columns))*np.nan
+
+        for region in X.index:
+
+            ridx = self.index_map[region]
+            data[ridx, :] = X.loc[region]
+
+        self.data = data
 
     def get_data(self):
 
@@ -56,7 +64,7 @@ class ParcelImage(object):
         Get whole ParcelImage DataFrame
         """
 
-        return self.X
+        return self.data
 
     def get_parcel(self, roi):
 
@@ -82,12 +90,4 @@ class ParcelImage(object):
             output name
         """
 
-        _, p = self.data.shape
-        data = np.zeros((self.rows, self.columns))
-
-        for region in self.data.index:
-
-            ridx = self.index_map[region]
-            data[ridx, :] = self.data.loc[region]
-        
-        write.save(data, outname, self.hemisphere)
+        write.save(self.data, outname, self.hemisphere)
